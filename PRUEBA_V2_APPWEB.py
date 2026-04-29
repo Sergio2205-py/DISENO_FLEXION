@@ -182,6 +182,14 @@ else:
     r_trac = r
     r_comp = r
 
+# ----------------------------------------
+# TIPO DE FLEXIÓN
+# ----------------------------------------
+
+if As_comp > 0:
+    tipoFlexion = "doble"
+else:
+    tipoFlexion = "simple"
 
 
 # ---------- GRUPOS DE ACERO INFERIOR (para ancho mínimo) ----------
