@@ -200,14 +200,14 @@ def calculoFlexionDoble(
     As_trac,
     As_comp,
     r_trac,
-    r_comp
+    r_comp,
+    tipo_momento
 ):
-    """
-    Flexión DOBLE: acero inferior y superior evaluados por compatibilidad de deformaciones
-    Se resuelve c con una cuadrática derivada del equilibrio de fuerzas.
-    """
+    import math
 
-    # Parámetros del concreto
+    # -------------------------------
+    # PARÁMETROS DEL CONCRETO
+    # -------------------------------
     if fc <= 280:
         beta1 = 0.85
     elif fc <= 560:
@@ -215,67 +215,79 @@ def calculoFlexionDoble(
     else:
         beta1 = 0.65
 
-    # GEOMETRÍA REAL DE LA SECCIÓN
     # -------------------------------
-    h_total = h
-    # posición del acero superior e inferior
-    y_superior = r_trac
-    y_inferior = h - r_comp
-    # el eje neutro se mide desde la fibra comprimida (arriba del bloque)
+    # DEFINICIÓN GEOMÉTRICA CORRECTA
+    # -------------------------------
+    if tipo_momento == "Positivo (tracción abajo)":
+        d_trac = h - r_trac   # acero inferior
+        d_comp = r_comp       # acero superior
 
-    # Coeficientes de la cuadrática en c
+    else:  # NEGATIVO
+        d_trac = r_trac       # acero superior
+        d_comp = h - r_comp   # acero inferior
+
+    # -------------------------------
+    # ECUACIÓN CUADRÁTICA EN c
+    # -------------------------------
     A = 0.85 * fc * beta1 * b
     B = As_comp * Es * Ecu - As_trac * fy
     C = -As_comp * Es * Ecu * d_comp
 
-    # Solución de c (usar la raíz positiva)
     discriminante = B**2 - 4 * A * C
     c = (-B + math.sqrt(discriminante)) / (2 * A)
 
-    # Derivados
     a = beta1 * c
-    # -------------------------------
-    # DEFORMACIONES (CORRECTO ACI)
-    # -------------------------------
-    eps_s  = Ecu * ( (h - y_superior) - c ) / c     # acero tracción
-    eps_sp = Ecu * ( (h - y_inferior) - c ) / c     # acero compresión
 
-    # Esfuerzos del acero
+    # -------------------------------
+    # DEFORMACIONES
+    # -------------------------------
+    eps_s  = Ecu * (d_trac - c) / c
+    eps_sp = Ecu * (c - d_comp) / c
+
+    # -------------------------------
+    # ESFUERZOS
+    # -------------------------------
     fs = min(Es * eps_s, fy)
     fs_p = min(Es * eps_sp, fy)
 
-    # Fuerzas
-    T = As_trac * fs
+    # -------------------------------
+    # FUERZAS
+    # -------------------------------
+    T  = As_trac * fs
     Cc = 0.85 * fc * b * a
     Cs = As_comp * fs_p
 
-    # Momento nominal
+    # -------------------------------
+    # MOMENTO NOMINAL
+    # -------------------------------
     Mn = (Cc * (d_trac - a / 2) + Cs * (d_trac - d_comp)) / (1000 * 100)
     phiMn = phiFlexion * Mn
-    
-    # Tipo de falla (criterio por εs)
-    tipoFalla = "Tracción" if eps_s >= 0.005 else "Compresión"
 
-    # Aceros de referencia
-    # Acero mínimo
+    # -------------------------------
+    # ACEROS DE REFERENCIA
+    # -------------------------------
     As_min = 0.7 * (fc ** 0.5) / fy * b * d_trac
-    # Balanceado considerando acero a compresión
+
     eps_y = fy / Es
     cb = (Ecu / (Ecu + eps_y)) * d_trac
+
     ab = beta1 * cb
-    # deformación acero superior
+
     eps_sp_bal = Ecu * (cb - d_comp) / cb
     fs_p_bal = min(Es * eps_sp_bal, fy)
 
-    # compresiones
     Cc_bal = 0.85 * fc * b * ab
     Cs_bal = As_comp * fs_p_bal
 
-    # tracción balanceada requerida
     As_bal = (Cc_bal + Cs_bal) / fy
     As_max = 0.75 * As_bal
 
-    resultado = {
+    # -------------------------------
+    # TIPO DE FALLA
+    # -------------------------------
+    tipoFalla = "Tracción" if eps_s >= 0.005 else "Compresión"
+
+    return {
         "beta1": beta1,
         "d": d_trac,
         "aceroMinimo_val": As_min,
@@ -285,7 +297,7 @@ def calculoFlexionDoble(
         "c_val": c,
         "phiMn_val": phiMn,
         "defAs": round(eps_s, 5),
-        "Cc_val": Cc/10**3,
+        "Cc_val": Cc / 10**3,
         "Mn_val": Mn,
         "cb_val": cb,
         "cb": f"{cb:.2f} cm",
@@ -297,8 +309,6 @@ def calculoFlexionDoble(
         "phiMn": f"{phiMn:.2f} ton·m",
         "tipoFalla": tipoFalla
     }
-
-    return resultado
 
 def sugerir_acero(As_req):
     mejores = []
