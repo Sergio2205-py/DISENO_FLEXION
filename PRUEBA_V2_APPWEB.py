@@ -1,5 +1,5 @@
 import streamlit as st
-import viga
+import PRUEBA_V2_VIGA
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
