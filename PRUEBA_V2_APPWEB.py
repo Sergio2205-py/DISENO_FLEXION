@@ -282,15 +282,13 @@ def graficoSeccion(b, h, r):
     ancho_barra = b - 2*r
 
     if tipo_momento == "Positivo (tracción abajo)":
-    # acero inferior
-    ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
-
+        # acero inferior
+        ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
     else:
-    # acero superior como tracción
-    y_sup = h - r - alto_barra
-    ax.fill_between([r, r + ancho_barra], y_sup, y_sup + alto_barra, color='black')
+        # acero superior como tracción
+        y_sup = h - r - alto_barra
+        ax.fill_between([r, r + ancho_barra], y_sup, y_sup + alto_barra, color='black')
 
-    
     ax.text(
         b / 2,
         r + alto_barra + 1,
