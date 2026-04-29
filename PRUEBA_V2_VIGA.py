@@ -269,7 +269,7 @@ def calculoFlexionDoble(
     As_min = 0.7 * (fc ** 0.5) / fy * b * d_trac
 
     eps_y = fy / Es
-    cb = (Ecu / (Ecu + eps_y)) * d_trac
+    cb = (Ecu / (Ecu + eps_y)) * h
 
     ab = beta1 * cb
 
