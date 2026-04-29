@@ -88,13 +88,6 @@ with st.sidebar:
     horizontal=True
     )
 
-    st.title("Tipo de momento")
-
-    tipo_momento = st.radio(
-        "Dirección del momento flector",
-        ["Positivo (tracción abajo)", "Negativo (tracción arriba)"]
-    )
-
     if num_capas == 1:
         r = r_1capa
     else:
