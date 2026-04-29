@@ -237,10 +237,11 @@ else:
         Es=Es,
         Ecu=ecu,
         phiFlexion=phiFlexion,
-        As_trac=As_trac_real,
-        As_comp=As_comp_real,
-        r_trac=r_trac_real,
-        r_comp=r_comp_real
+        As_trac=As_trac,
+        As_comp=As_comp,
+        r_trac=r,
+        r_comp=r,
+        tipo_momento=tipo_momento   # 👈 NUEVO
     )
 # ---------- ACERO REQUERIDO POR Mu ----------
 As_req = None
