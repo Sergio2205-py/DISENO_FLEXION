@@ -100,9 +100,9 @@ with st.sidebar:
     else:
         r = r_2capas
 
-# ---------- ACERO SUPERIOR (COMPRESIÓN / NEGATIVO) ----------
+# ---------- ACERO SUPERIOR ----------
 st.markdown(
-    "<h4 style='margin-bottom:-30px;'>🔼 Acero superior (compresión)</h4>",
+    "<h4 style='margin-bottom:-30px;'>🔼 Acero superior</h4>",
     unsafe_allow_html=True
 )
 
@@ -135,9 +135,9 @@ else:
     tipoFlexion = "simple"
 
 
-# ---------- ACERO INFERIOR (TRACCIÓN / POSITIVO) ----------
+# ---------- ACERO INFERIOR ----------
 st.markdown(
-    "<h4 style='margin-bottom:-30px; margin-top:-30px;'>🔽 Acero inferior (tracción)</h4>",
+    "<h4 style='margin-bottom:-30px; margin-top:-30px;'>🔽 Acero inferior</h4>",
     unsafe_allow_html=True
 )
 
