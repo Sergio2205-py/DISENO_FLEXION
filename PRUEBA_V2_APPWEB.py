@@ -114,20 +114,6 @@ col6s.markdown("# +")
 numero3s = col7s.number_input("", value=0, min_value=0, key="numero3s")
 diametro3s = col8s.selectbox("", viga.tablaAceros["Diametro"], key="diametro3s")
 
-# Área de acero en compresión
-As_comp = (
-    viga.areaAs(numero1s, diametro1s)
-    + viga.areaAs(numero2s, diametro2s)
-    + viga.areaAs(numero3s, diametro3s)
-)
-As_comp = round(As_comp, 2)
-
-if As_comp > 0:
-    tipoFlexion = "doble"
-else:
-    tipoFlexion = "simple"
-
-
 # ---------- ACERO INFERIOR ----------
 st.markdown(
     "<h4 style='margin-bottom:-30px; margin-top:-30px;'>🔽 Acero inferior</h4>",
@@ -149,34 +135,54 @@ col6.markdown("# +")
 numero3 = col7.number_input("", value=0, min_value=0, key="numero3")
 diametro3 = col8.selectbox("", viga.tablaAceros["Diametro"], key="diametro3")
 
-# Área de acero a tracción
-As_trac = (
+# ----------------------------------------
+# TIPO DE MOMENTO (DEFINIR PRIMERO)
+# ----------------------------------------
+
+tipo_momento = st.radio(
+    "Tipo de momento",
+    ["Positivo (tracción abajo)", "Negativo (tracción arriba)"],
+    horizontal=True
+)
+
+
+# ----------------------------------------
+# CÁLCULO DE ÁREAS
+# ----------------------------------------
+
+As_inferior = (
     viga.areaAs(numero1, diametro1)
     + viga.areaAs(numero2, diametro2)
     + viga.areaAs(numero3, diametro3)
 )
-As_trac = round(As_trac, 2)
 
-# -------------------------------
-# DEFINICIÓN SEGÚN MOMENTO
-# -------------------------------
-
-tipo_momento = st.radio(
-    "Tipo de momento",
-    ["Positivo (tracción abajo)", "Negativo (tracción arriba)"]
+As_superior = (
+    viga.areaAs(numero1s, diametro1s)
+    + viga.areaAs(numero2s, diametro2s)
+    + viga.areaAs(numero3s, diametro3s)
 )
 
+As_inferior = round(As_inferior, 2)
+As_superior = round(As_superior, 2)
+
+
+# ----------------------------------------
+# SWITCH CORRECTO
+# ----------------------------------------
+
 if tipo_momento == "Positivo (tracción abajo)":
-    As_trac_real = As_trac
-    As_comp_real = As_comp
-    r_trac_real = r_1capa if num_capas == 1 else r_2capas
-    r_comp_real = r_1capa if num_capas == 1 else r_2capas
+    As_trac = As_inferior
+    As_comp = As_superior
+    r_trac = r
+    r_comp = r
 
 else:
-    As_trac_real = As_comp
-    As_comp_real = As_trac
-    r_trac_real = r_1capa if num_capas == 1 else r_2capas
-    r_comp_real = r_1capa if num_capas == 1 else r_2capas
+    As_trac = As_superior
+    As_comp = As_inferior
+    r_trac = r
+    r_comp = r
+
+
 
 # ---------- GRUPOS DE ACERO INFERIOR (para ancho mínimo) ----------
 grupos_acero = []
@@ -239,8 +245,8 @@ else:
         phiFlexion=phiFlexion,
         As_trac=As_trac,
         As_comp=As_comp,
-        r_trac=r,
-        r_comp=r,
+        r_trac=r_trac,
+        r_comp=r_comp,
         tipo_momento=tipo_momento   # 👈 NUEVO
     )
 # ---------- ACERO REQUERIDO POR Mu ----------
