@@ -215,9 +215,13 @@ def calculoFlexionDoble(
     else:
         beta1 = 0.65
 
-    # Peraltes efectivos
-    d_trac = h - r_trac   # acero inferior
-    d_comp = r_comp       # acero superior (d')
+    # GEOMETRÍA REAL DE LA SECCIÓN
+    # -------------------------------
+    h_total = h
+    # posición del acero superior e inferior
+    y_superior = r_trac
+    y_inferior = h - r_comp
+    # el eje neutro se mide desde la fibra comprimida (arriba del bloque)
 
     # Coeficientes de la cuadrática en c
     A = 0.85 * fc * beta1 * b
@@ -230,8 +234,11 @@ def calculoFlexionDoble(
 
     # Derivados
     a = beta1 * c
-    eps_s = Ecu * (d_trac - c) / c           # deformación acero tracción
-    eps_sp = Ecu * (c - d_comp) / c          # deformación acero compresión
+    # -------------------------------
+    # DEFORMACIONES (CORRECTO ACI)
+    # -------------------------------
+    eps_s  = Ecu * ( (h - y_superior) - c ) / c     # acero tracción
+    eps_sp = Ecu * ( (h - y_inferior) - c ) / c     # acero compresión
 
     # Esfuerzos del acero
     fs = min(Es * eps_s, fy)
