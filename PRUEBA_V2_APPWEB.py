@@ -469,11 +469,17 @@ st.markdown(f"""
 colA, colB = st.columns(2)
 
 with colA:
+    st.markdown("### 🔹 Análisis (con acero colocado)")
     card("As mínimo", calculoViga["aceroMinimo"])
     card("As balanceado", calculoViga["aceroBalanceado"])
     card("As máximo", calculoViga["aceroMaximo"])
-    card("a", calculoViga["a"])
+    card("a (análisis)", calculoViga["a"])
     card("cb", calculoViga["cb"])
+
+    if As_req is not None:
+        st.markdown("### 🔸 Diseño (por Mu)")
+        card("As requerido", f"{As_req:.2f} cm²")
+        card("a (diseño)", f"{a_req:.2f} cm")
 
 with colB:
     card("c", calculoViga["c"])
