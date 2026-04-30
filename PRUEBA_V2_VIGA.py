@@ -215,17 +215,6 @@ def calculoFlexionDoble(
         beta1 = 0.65
 
     # -------------------------------
-    # DEFINICIÓN GEOMÉTRICA CORRECTA
-    # -------------------------------
-    if tipo_momento == "Positivo (tracción abajo)":
-        d_trac = h - r_trac   # acero inferior
-        d_comp = r_comp       # acero superior
-
-    else:  # NEGATIVO
-        d_trac = r_trac       # acero superior
-        d_comp = h - r_comp   # acero inferior
-
-    # -------------------------------
     # ECUACIÓN CUADRÁTICA EN c
     # -------------------------------
     A = 0.85 * fc * beta1 * b
