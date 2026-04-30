@@ -247,14 +247,18 @@ def calculoFlexionDoble(
     # ESFUERZOS
     # -------------------------------
     fs = min(Es * eps_s, fy)
-    fs_p = min(Es * eps_sp, fy)
+    fs_p = Es * eps_sp
+
+    # limitar a fy en magnitud
+    if abs(fs_p) > fy:
+        fs_p = fy * (1 if fs_p > 0 else -1)
 
     # -------------------------------
     # FUERZAS
     # -------------------------------
     T  = As_trac * fs
     Cc = 0.85 * fc * b * a
-    Cs = As_comp * fs_p
+    Cs = As_comp * abs(fs_p)
 
     # -------------------------------
     # MOMENTO NOMINAL
