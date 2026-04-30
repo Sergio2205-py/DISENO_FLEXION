@@ -276,6 +276,7 @@ As_req = None
 a_req = None
 
 if tipoFlexion == "simple":
+
     As_req, a_req = viga.acero_requerido_flexion_simple_formula(
         b=b,
         h=h,
@@ -285,6 +286,35 @@ if tipoFlexion == "simple":
         phi=phiFlexion,
         Mu=Mu
     )
+
+else:
+
+    # -------------------------------
+    # DISTANCIAS EFECTIVAS
+    # -------------------------------
+    if tipo_momento == "Positivo (tracción abajo)":
+        d = h - r
+        d_prima = r
+    else:
+        d = h - r
+        d_prima = r
+
+    resultado = viga.diseno_flexion_doble(
+        b=b,
+        h=h,
+        fc=fc,
+        fy=fy,
+        Es=Es,
+        Ecu=ecu,
+        phi=phiFlexion,
+        Mu=Mu,
+        As_comp=As_comp,
+        d=d,
+        d_prima=d_prima
+    )
+
+    As_req = round(resultado["As_trac"], 2)
+    a_req = round(resultado["a"], 2)
 
 # ------------------ GRÁFICO DE SECCIÓN ------------------
 def graficoSeccion(b, h, r):
