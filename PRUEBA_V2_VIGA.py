@@ -214,6 +214,9 @@ def calculoFlexionDoble(
     else:
         beta1 = 0.65
 
+    # 🔥 ESTO FALTABA O SE BORRÓ
+    d_trac = h - r_trac
+    d_comp = r_comp
     # -------------------------------
     # ECUACIÓN CUADRÁTICA EN c
     # -------------------------------
