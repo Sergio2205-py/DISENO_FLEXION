@@ -243,6 +243,21 @@ if tipoFlexion == "simple":
     )
 
 else:
+
+    # -------------------------------
+    # DEFINICIÓN DE DISTANCIAS REALES
+    # -------------------------------
+    if tipo_momento == "Positivo (tracción abajo)":
+        r_trac_real = r
+        r_comp_real = r
+    else:
+        # 🔥 invertir geometría
+        r_trac_real = r
+        r_comp_real = h - r
+
+    # -------------------------------
+    # CÁLCULO DE FLEXIÓN DOBLE
+    # -------------------------------
     calculoViga = viga.calculoFlexionDoble(
         b=b,
         h=h,
@@ -253,9 +268,8 @@ else:
         phiFlexion=phiFlexion,
         As_trac=As_trac,
         As_comp=As_comp,
-        r_trac=r_trac,
-        r_comp=r_comp,
-        tipo_momento=tipo_momento   # 👈 NUEVO
+        r_trac=r_trac_real,
+        r_comp=r_comp_real
     )
 # ---------- ACERO REQUERIDO POR Mu ----------
 As_req = None
