@@ -323,3 +323,50 @@ def sugerir_acero(As_req):
 
     return "Sin sugerencia"
 
+
+def diseno_flexion_doble(
+    b, h, fc, fy, Es, Ecu, phi,
+    Mu, As_comp, d, d_prima
+):
+
+    Mu = Mu * 100000  # ton·m → kg·cm
+
+    if fc <= 280:
+        beta1 = 0.85
+    elif fc <= 560:
+        beta1 = 1.05 - 0.714*(fc/1000)
+    else:
+        beta1 = 0.65
+
+    c = 1.0
+    paso = 0.05
+
+    for _ in range(1000):
+
+        a = beta1 * c
+
+        # deformación acero compresión
+        eps_s_comp = Ecu * (c - d_prima) / c
+        fs_comp = min(Es * eps_s_comp, fy)
+
+        # fuerzas
+        Cc = 0.85 * fc * b * a
+        Cs = As_comp * fs_comp
+
+        # acero requerido
+        As_trac = (Cc + Cs) / fy
+
+        # momento
+        Mn = Cc * (d - a/2) + Cs * (d - d_prima)
+
+        if phi * Mn >= Mu:
+            break
+
+        c += paso
+
+    return {
+        "c": c,
+        "a": a,
+        "As_trac": As_trac,
+        "Mn": Mn / 100000
+    }
