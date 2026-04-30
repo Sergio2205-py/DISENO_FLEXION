@@ -217,14 +217,10 @@ def calculoFlexionDoble(
   # ---------------------------------
 # DEFINICIÓN CORRECTA DE DISTANCIAS
 # ---------------------------------
-    if r_trac < r_comp:
-        # tracción abajo (momento positivo)
-        d_trac = h - r_trac
-        d_comp = r_comp
-    else:
-        # tracción arriba (momento negativo)
-        d_trac = h - r_trac
-        d_comp = r_comp
+    # d = distancia desde fibra comprimida hasta acero a tracción
+    d_trac = h - r_trac
+    # d' = distancia desde fibra comprimida hasta acero en compresión
+    d_comp = r_comp
     # -------------------------------
     # ECUACIÓN CUADRÁTICA EN c
     # -------------------------------
