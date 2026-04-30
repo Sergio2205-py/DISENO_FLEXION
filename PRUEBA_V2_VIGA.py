@@ -214,9 +214,17 @@ def calculoFlexionDoble(
     else:
         beta1 = 0.65
 
-    # 🔥 ESTO FALTABA O SE BORRÓ
-    d_trac = h - r_trac
-    d_comp = r_comp
+  # ---------------------------------
+# DEFINICIÓN CORRECTA DE DISTANCIAS
+# ---------------------------------
+    if r_trac < r_comp:
+        # tracción abajo (momento positivo)
+        d_trac = h - r_trac
+        d_comp = r_comp
+    else:
+        # tracción arriba (momento negativo)
+        d_trac = h - r_trac
+        d_comp = r_comp
     # -------------------------------
     # ECUACIÓN CUADRÁTICA EN c
     # -------------------------------
@@ -251,7 +259,7 @@ def calculoFlexionDoble(
     # -------------------------------
     # MOMENTO NOMINAL
     # -------------------------------
-    Mn = (Cc * (d_trac - a / 2) + Cs * (d_trac - d_comp)) / (1000 * 100)
+    Mn = (Cc * (d_trac - a / 2) - Cs * (d_comp - a / 2)) / (1000 * 100)
     phiMn = phiFlexion * Mn
 
     # -------------------------------
