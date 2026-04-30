@@ -201,7 +201,6 @@ def calculoFlexionDoble(
     As_comp,
     r_trac,
     r_comp,
-    tipo_momento
 ):
     import math
 
