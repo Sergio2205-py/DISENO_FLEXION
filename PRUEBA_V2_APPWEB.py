@@ -305,7 +305,7 @@ else:
     
     ratio_dp_c = d_prima_real / c
     
-    card("d'/c", f"{ratio_dp_c:.3f}")
+    card("d'/c (fluye si <0.3)", f"{ratio_dp_c:.3f}")
     
     if fy == 4200:
         if ratio_dp_c <= 0.3:
