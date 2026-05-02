@@ -584,16 +584,6 @@ with colB:
 if As_trac > calculoViga["aceroMaximo_val"]:
     st.error("❌ Acero instalado supera As máximo permitido")
 
-elif relacion < 0.75:
-    st.success("✅ Sección dúctil (subreforzada)")
-
-elif relacion <= 1.0:
-    st.warning("⚠️ Cercana al estado balanceado")
-
-else:
-    st.error("❌ Sección sobrerreforzada")
-
-
 # ---------- DETALLE DE CÁLCULOS ----------
 with st.expander("📐 Ver cálculos"):
 
