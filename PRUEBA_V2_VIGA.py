@@ -30,13 +30,24 @@ def calculoFlexion(
     aceroBalanceado = 0.85 * fc * b * ab / fy
     aceroMaximo = 0.75 * aceroBalanceado
 
+    # Tipo de falla preliminar (para fs)
     if acero < aceroBalanceado:
-        # Caso: acero fluye
-        a = T / (0.85 * fc * b)
+        fs = fy
+    else:
+        # necesitas c primero → pero aún no lo tienes
+        fs = fy  # aproximación inicial (o puedes resolver iterativo)
+    
+    T = acero * fs  # kgf
+
+    if acero < aceroBalanceado:
+        a = acero * fy / (0.85 * fc * b)
         c = a / beta1
-        Mn = T * (d - a / 2) / (1000 * 100)
+        
+        Mn = (acero * fy * (d - a/2)) / (1000 * 100)
         phiMn = phiFlexion * Mn
-        Cc = (0.85 * fc * b * a)/10**3   # <-- ahora también defines Cc aquí
+        
+        Cc = (0.85 * fc * b * a)/1000
+        T = acero * fy / 1000  # en tonf
     else:
         # Caso: acero no fluye
         A = (0.85 * fc) / (Ecu * Es * (acero / (b * d)))
@@ -58,11 +69,6 @@ def calculoFlexion(
         tipoFalla = "Balanceada"
 
     defAs = round(Ecu * (d - c) / c, 6)
-    # -------------------------------
-    # FUERZA DE TRACCIÓN
-    # -------------------------------
-    fs = fy if acero < aceroBalanceado else Es * defAs
-    T = acero * fs   # kgf
     
     resultado = {
         "beta1": beta1,
