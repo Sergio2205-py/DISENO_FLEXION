@@ -62,7 +62,7 @@ def calculoFlexion(
     # FUERZA DE TRACCIÓN
     # -------------------------------
     fs = fy if acero < aceroBalanceado else Es * defAs
-    T = acero * fs / 1000  # tonf
+    T = acero * fs   # kgf
     
     resultado = {
         "beta1": beta1,
@@ -87,8 +87,8 @@ def calculoFlexion(
         "phiMn": f"{phiMn:.2f} ton·m",
         "tipoFalla": tipoFalla,
         "Cc": f"{Cc:.2f} tonf",
-        "T_val": T,
-        "T": f"{T:.2f} tonf",
+        "T_val": T / 1000,
+        "T": f"{T/1000:.2f} tonf",
         "fs": fs,
     }
 
