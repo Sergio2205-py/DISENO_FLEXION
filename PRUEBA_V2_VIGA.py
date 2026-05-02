@@ -30,15 +30,15 @@ def calculoFlexion(
     aceroBalanceado = 0.85 * fc * b * ab / fy
     aceroMaximo = 0.75 * aceroBalanceado
 
-        if acero < aceroBalanceado:
+    if acero < aceroBalanceado:
         a = acero * fy / (0.85 * fc * b)
         c = a / beta1
-        
+        fs = fy
         Mn = (acero * fy * (d - a/2)) / (1000 * 100)
         phiMn = phiFlexion * Mn
         
         Cc = (0.85 * fc * b * a)/1000
-        T = acero * fy / 1000  # en tonf
+        T = acero * fs / 1000  # en tonf
     else:
         # Caso: acero no fluye
         A = (0.85 * fc) / (Ecu * Es * (acero / (b * d)))
@@ -366,7 +366,6 @@ def diseno_flexion_doble(
         # deformación acero compresión
         eps_s_comp = Ecu * (c - d_prima) / c
         fs_comp = min(Es * eps_s_comp, fy)
-
         # fuerzas
         Cc = 0.85 * fc * b * a
         Cs = As_comp * fs_comp
