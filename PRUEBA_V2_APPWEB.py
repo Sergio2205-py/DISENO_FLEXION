@@ -610,9 +610,9 @@ with st.expander("📐 Ver cálculos"):
     else:
         r_usado = r_sup
 
-st.markdown(
-    f"d = {h} − {r_usado} = **{calculoViga['d']:.2f} cm**"
-)
+    st.markdown(
+        f"d = {h} − {r_usado} = **{calculoViga['d']:.2f} cm**"
+    )
 
     st.divider()
 
