@@ -59,7 +59,12 @@ def calculoFlexion(
         tipoFalla = "Balanceada"
 
     defAs = round(Ecu * (d - c) / c, 6)
-
+    # -------------------------------
+    # FUERZA DE TRACCIÓN
+    # -------------------------------
+    fs = fy if acero < aceroBalanceado else Es * defAs
+    T = acero * fs / 1000  # tonf
+    
     resultado = {
         "beta1": beta1,
         "d": d,
@@ -83,6 +88,9 @@ def calculoFlexion(
         "phiMn": f"{phiMn:.2f} ton·m",
         "tipoFalla": tipoFalla,
         "Cc": f"{Cc:.2f} tonf"
+        "T_val": T,
+        "T": f"{T:.2f} tonf",
+        "fs": fs,
     }
 
     return resultado
@@ -232,18 +240,18 @@ def calculoFlexionDoble(
     c = (-B + math.sqrt(discriminante)) / (2 * A)
 
     a = beta1 * c
-
-    # -------------------------------
+    
     # DEFORMACIONES
-    # -------------------------------
     eps_s  = Ecu * (d_trac - c) / c
     eps_sp = Ecu * (c - d_comp) / c
 
-    # -------------------------------
     # ESFUERZOS
-    # -------------------------------
     fs = min(Es * eps_s, fy)
     fs_p = Es * eps_sp
+
+    # FUERZAS
+    T = As_trac * fs / 1000
+    Cs = As_comp * fs_p / 1000
 
     # limitar a fy en magnitud
     if abs(fs_p) > fy:
@@ -306,6 +314,12 @@ def calculoFlexionDoble(
         "c": f"{c:.2f} cm",
         "phiMn": f"{phiMn:.2f} ton·m",
         "tipoFalla": tipoFalla
+        "T_val": T,
+        "T": f"{T:.2f} tonf",
+        "Cs_val": Cs,
+        "Cs": f"{Cs:.2f} tonf",
+        "fs": fs,
+        "fs_comp": fs_p,
     }
 
 def sugerir_acero(As_req):
