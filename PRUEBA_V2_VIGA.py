@@ -230,30 +230,45 @@ def calculoFlexionDoble(
     c = 1.0
     paso = 0.05
 
-    for _ in range(2000):
-
+    # -------------------------------
+    # BÚSQUEDA DE c (BISECCIÓN)
+    # -------------------------------
+    c_min = 0.001
+    c_max = d - 0.001
+    
+    for _ in range(100):
+    
+        c = (c_min + c_max) / 2
         a = beta1 * c
-
+    
         # deformaciones
         eps_s  = Ecu * (d - c) / c
         eps_sp = Ecu * (c - d_prima) / c
-
+    
         # esfuerzos
         fs  = min(Es * eps_s, fy)
-        fs_p = min(Es * eps_sp, fy)
+        fs_p = Es * eps_sp
 
+        if abs(fs_p) > fy:
+            fs_p = fy * (1 if fs_p > 0 else -1)
+    
         # fuerzas (kgf)
         T  = As_trac * fs
         Cc = 0.85 * fc * b * a
         Cs = As_comp * fs_p
-
-        # equilibrio
+    
         error = T - (Cc + Cs)
-
+    
         if abs(error) < 1e-2:
             break
-
-        c += paso
+    
+        # decisión de bisección
+        if error > 0:
+            c_min = c
+        else:
+            c_max = c
+    if c <= 0 or c >= d:
+    raise ValueError("No se encontró solución física para c")
 
     # -------------------------------
     # FUERZAS en tonf
