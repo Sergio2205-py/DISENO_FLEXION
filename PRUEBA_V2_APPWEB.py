@@ -161,15 +161,18 @@ As_inferior = round(As_inferior, 2)
 As_superior = round(As_superior, 2)
 
 # ----------------------------------------
-# IDENTIFICACIÓN AUTOMÁTICA
+# DEFINICIÓN SEGÚN TIPO DE MOMENTO
 # ----------------------------------------
 
-if As_inferior >= As_superior:
-    # tracción abajo
+tipo_momento = st.radio(
+    "Tipo de momento",
+    ["Positivo (tracción abajo)", "Negativo (tracción arriba)"]
+)
+
+if tipo_momento == "Positivo (tracción abajo)":
     As_trac = As_inferior
     As_comp = As_superior
 else:
-    # tracción arriba
     As_trac = As_superior
     As_comp = As_inferior
 
@@ -246,6 +249,14 @@ if tipoFlexion == "simple":
 
 else:
 
+    if tipo_momento == "Positivo (tracción abajo)":
+        r_trac_real = r
+        r_comp_real = r_comp_input
+    else:
+        # invertir geometría
+        r_trac_real = r
+        r_comp_real = h - r_comp_input
+    
     calculoViga = viga.calculoFlexionDoble(
         b=b,
         h=h,
@@ -256,10 +267,10 @@ else:
         phiFlexion=phiFlexion,
         As_trac=As_trac,
         As_comp=As_comp,
-        r_trac=r,
-        r_comp=r_comp_input
+        r_trac=r_trac_real,
+        r_comp=r_comp_real
     )
-
+    
     resultado = viga.diseno_flexion_doble(
         b=b,
         h=h,
@@ -270,8 +281,26 @@ else:
         phi=phiFlexion,
         Mu=Mu,
         As_comp=As_comp,
-        d=d,
-        d_prima=d_prima
+        if tipo_momento == "Positivo (tracción abajo)":
+            d_real = h - r
+            d_prima_real = r_comp_input
+        else:
+            d_real = h - r
+            d_prima_real = h - r_comp_input
+        
+        resultado = viga.diseno_flexion_doble(
+            b=b,
+            h=h,
+            fc=fc,
+            fy=fy,
+            Es=Es,
+            Ecu=ecu,
+            phi=phiFlexion,
+            Mu=Mu,
+            As_comp=As_comp,
+            d=d_real,
+            d_prima=d_prima_real
+        )
     )
     
     As_req = round(resultado["As_trac"], 2)
@@ -295,7 +324,7 @@ def graficoSeccion(b, h, r):
     ancho_barra = b - 2*r
     
     # detectar dónde está la tracción
-    if As_inferior >= As_superior:
+    if tipo_momento == "Positivo (tracción abajo)":
         # tracción abajo
         ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
     else:
@@ -311,8 +340,12 @@ def graficoSeccion(b, h, r):
         color='red'
     )
 
-    ax.text(2, h-2, "Compresión", color='gray')
-    ax.text(2, 2, "Tracción", color='red')
+    if tipo_momento == "Positivo (tracción abajo)":
+        ax.text(2, h-2, "Compresión", color='gray')
+        ax.text(2, 2, "Tracción", color='red')
+    else:
+        ax.text(2, h-2, "Tracción", color='red')
+        ax.text(2, 2, "Compresión", color='gray')
 
     # ---------------- ACERO SUPERIOR ----------------
     if As_comp > 0:
