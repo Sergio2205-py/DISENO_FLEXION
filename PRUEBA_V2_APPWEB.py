@@ -163,15 +163,6 @@ As_superior = (
 As_inferior = round(As_inferior, 2)
 As_superior = round(As_superior, 2)
 
-# ----------------------------------------
-# DEFINICIÓN SEGÚN TIPO DE MOMENTO
-# ----------------------------------------
-
-tipo_momento = st.radio(
-    "Tipo de momento",
-    ["Positivo (tracción abajo)", "Negativo (tracción arriba)"]
-)
-
 if tipo_momento == "Positivo (tracción abajo)":
     As_trac = As_inferior
     As_comp = As_superior
@@ -278,6 +269,19 @@ else:
         r_comp=r_comp_real
     )
     
+    # -------------------------------
+# DEFINIR d y d' SEGÚN MOMENTO
+# -------------------------------
+    if tipo_momento == "Positivo (tracción abajo)":
+        d_real = h - r
+        d_prima_real = r_comp_input
+    else:
+        d_real = h - r
+        d_prima_real = h - r_comp_input
+    
+    # -------------------------------
+    # DISEÑO FLEXIÓN DOBLE
+    # -------------------------------
     resultado = viga.diseno_flexion_doble(
         b=b,
         h=h,
@@ -288,26 +292,8 @@ else:
         phi=phiFlexion,
         Mu=Mu,
         As_comp=As_comp,
-        if tipo_momento == "Positivo (tracción abajo)":
-            d_real = h - r
-            d_prima_real = r_comp_input
-        else:
-            d_real = h - r
-            d_prima_real = h - r_comp_input
-        
-        resultado = viga.diseno_flexion_doble(
-            b=b,
-            h=h,
-            fc=fc,
-            fy=fy,
-            Es=Es,
-            Ecu=ecu,
-            phi=phiFlexion,
-            Mu=Mu,
-            As_comp=As_comp,
-            d=d_real,
-            d_prima=d_prima_real
-        )
+        d=d_real,
+        d_prima=d_prima_real
     )
     
     As_req = round(resultado["As_trac"], 2)
