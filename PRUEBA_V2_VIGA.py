@@ -280,7 +280,6 @@ def calculoFlexionDoble(
 
     As_bal = (Cc_bal + Cs_bal) / fy
     As_max = 0.75 * As_bal
-
     # -------------------------------
     # TIPO DE FALLA
     # -------------------------------
