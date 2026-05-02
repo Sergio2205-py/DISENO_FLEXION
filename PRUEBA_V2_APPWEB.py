@@ -85,7 +85,10 @@ with st.sidebar:
         min_value=0.0,
         help="Momento flector último actuante en la sección"
     )
-
+    tipo_momento = st.radio(
+        "Tipo de momento",
+        ["Positivo (tracción abajo)", "Negativo (tracción arriba)"]
+    )
 
     st.title("Disposición del acero")
     num_capas = st.radio(
