@@ -250,7 +250,14 @@ if tipoFlexion == "simple":
         phi=phiFlexion,
         Mu=Mu
     )
+    Mu_kgcm = Mu * 100000
+    Ku = Mu_kgcm / (b * d**2)
     
+    card("Ku", f"{Ku:.2f} kg/cm²")
+    st.caption("Válido para flexión simple (sin acero a compresión)")
+
+
+
 else:
 
     # -------------------------------
@@ -288,7 +295,32 @@ else:
     else:
         d_real = h - r
         d_prima_real = h - r_comp_input
+
+    # ---------------- d'/c ----------------
+    c = calculoViga["c_val"]
     
+    ratio_dp_c = d_prima_real / c
+    
+    card("d'/c", f"{ratio_dp_c:.3f}")
+    
+    if fy == 4200:
+        if ratio_dp_c <= 0.3:
+            st.success("✅ Acero a compresión fluye")
+        else:
+            st.warning("⚠️ Acero a compresión NO fluye")
+
+    # ----------- Condición Ottazzi -----------
+    rho_br = 0.0213
+    
+    As_min_comp_fluencia = As_comp + 5.667 * rho_br * b * d_prima_real
+    
+    card("As para fluencia A's", f"{As_min_comp_fluencia:.2f} cm²")
+    
+    if As_trac >= As_min_comp_fluencia:
+        st.success("✅ Se garantiza fluencia del acero a compresión")
+    else:
+        st.warning("⚠️ No se garantiza fluencia del acero a compresión")
+
     # -------------------------------
     # DISEÑO FLEXIÓN DOBLE
     # -------------------------------
@@ -520,11 +552,31 @@ with colB:
     card("ØMn", calculoViga["phiMn"])
     card("εs", calculoViga["defAs"])
 
+    eps_y = fy / Es
+    
+    if calculoViga["defAs"] >= eps_y:
+        st.success("✅ Acero a tracción fluye (εs ≥ εy)")
+    else:
+        st.warning("⚠️ Acero NO fluye (εs < εy)")
+    
+    card("T (tracción)", calculoViga["T"])
+    if tipoFlexion == "doble":
+        card("T' (compresión)", calculoViga["Cs"])
+
 # ---------- INDICADOR c / cb ----------
 c_real = calculoViga["c_val"]
 cb = calculoViga["cb_val"]
 
 relacion = c_real / cb
+
+cd = c_real / d
+card("c/d", f"{cd:.3f}")
+
+if fy == 4200:
+    if cd < 0.588:
+        st.success("✅ Acero fluye (criterio c/d < 0.588, fy=4200)")
+    else:
+        st.warning("⚠️ No garantiza fluencia")
 
 st.markdown("### 📊 Estado de ductilidad")
 
