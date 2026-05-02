@@ -283,19 +283,26 @@ else:
         phiFlexion=phiFlexion,
         As_trac=As_trac,
         As_comp=As_comp,
-        r_trac=r_trac_real,
-        r_comp=r_comp_real
+        r_trac=(h - d_real),     
+        r_comp=d_prima_real
     )
     
-    # -------------------------------
-# DEFINIR d y d' SEGÚN MOMENTO
-# -------------------------------
+# DEFINIR GEOMETRÍA REAL SEGÚN MOMENTO
+
+    r_inf = r                  # recubrimiento acero inferior
+    r_sup = r_comp_input       # recubrimiento acero superior
+    
     if tipo_momento == "Positivo (tracción abajo)":
-        d_real = h - r
-        d_prima_real = r_comp_input
-    else:
-        d_real = h - r
-        d_prima_real = h - r_comp_input
+        d_real = h - r_inf
+        d_prima_real = r_sup
+        As_trac = As_inferior
+        As_comp = As_superior
+    
+    else:  # momento negativo
+        d_real = h - r_sup
+        d_prima_real = r_inf
+        As_trac = As_superior
+        As_comp = As_inferior
 
     # ---------------- d'/c ----------------
     c = calculoViga["c_val"]
