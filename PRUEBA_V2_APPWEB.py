@@ -265,20 +265,20 @@ if tipoFlexion == "simple":
         Ecu=ecu,
         phiFlexion=phiFlexion,
         acero=As_trac,
-        r=r
+        r=(h - d_real)
     )
 
     As_req, a_req = viga.acero_requerido_flexion_simple_formula(
         b=b,
         h=h,
-        r=r,
+        r=(h - d_real),
         fc=fc,
         fy=fy,
         phi=phiFlexion,
         Mu=Mu
     )
     Mu_kgcm = Mu * 100000
-    Ku = Mu_kgcm / (b * d**2)
+    Ku = Mu_kgcm / (b * d_real**2)
 
 else:
 
