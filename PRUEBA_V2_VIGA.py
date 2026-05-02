@@ -255,8 +255,7 @@ def calculoFlexionDoble(
         # fuerzas (kgf)
         T  = As_trac * fs
         Cc = 0.85 * fc * b * a
-        Cs = As_comp * fs_p
-    
+        Cs = As_comp * abs(fs_p)
         error = T - (Cc + Cs)
     
         if abs(error) < 1e-2:
@@ -268,7 +267,7 @@ def calculoFlexionDoble(
         else:
             c_max = c
     if c <= 0 or c >= d:
-    raise ValueError("No se encontró solución física para c")
+        raise ValueError("No se encontró solución física para c")
 
     # -------------------------------
     # FUERZAS en tonf
