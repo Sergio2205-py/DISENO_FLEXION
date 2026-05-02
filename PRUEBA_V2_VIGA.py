@@ -82,7 +82,7 @@ def calculoFlexion(
         "Mn": f"{Mn:.2f} ton·m",
         "phiMn": f"{phiMn:.2f} ton·m",
         "tipoFalla": tipoFalla,
-        "Cc": f"{Cc:.2f} kgf"
+        "Cc": f"{Cc:.2f} tonf"
     }
 
     return resultado
