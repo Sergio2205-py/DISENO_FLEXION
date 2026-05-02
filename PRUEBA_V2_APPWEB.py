@@ -282,14 +282,6 @@ if tipoFlexion == "simple":
 
 else:
 
-    # -------------------------------
-    # DEFINIR GEOMETRÍA SEGÚN MOMENTO
-    # -------------------------------
-     # definir geometría según el tipo de momento
-    
-    r_trac_real = r
-    r_comp_real = r_comp_input
-
     # cálculo de flexión doble
     calculoViga = viga.calculoFlexionDoble(
         b=b,
