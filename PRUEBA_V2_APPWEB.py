@@ -106,10 +106,14 @@ with st.sidebar:
     horizontal=True
     )
 
+    # Recubrimiento inferior (controlado por capas)
     if num_capas == 1:
-        r = r_1capa
+        r_inf = r_1capa
     else:
-        r = r_2capas
+        r_inf = r_2capas
+
+# Recubrimiento superior (independiente)
+r_sup = r_comp_input
 
 # ---------- ACERO SUPERIOR ----------
 st.markdown(
@@ -193,9 +197,6 @@ d_prima = r_comp_input   # acero a compresión
 # DEFINIR GEOMETRÍA REAL SEGÚN MOMENTO
 # -------------------------------
 
-r_inf = r                  # recubrimiento acero inferior
-r_sup = r_comp_input       # recubrimiento acero superior
-
 if tipo_momento == "Positivo (tracción abajo)":
     d_real = h - r_inf
     d_prima_real = r_sup
@@ -207,9 +208,6 @@ else:  # momento negativo
     d_prima_real = r_inf
     As_trac = As_superior
     As_comp = As_inferior
-
-
-
 
 if As_comp > 0:
     tipoFlexion = "doble"
