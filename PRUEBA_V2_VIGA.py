@@ -32,7 +32,6 @@ def calculoFlexion(
 
     if acero < aceroBalanceado:
         # Caso: acero fluye
-        T = acero * fy
         a = T / (0.85 * fc * b)
         c = a / beta1
         Mn = T * (d - a / 2) / (1000 * 100)
@@ -249,20 +248,18 @@ def calculoFlexionDoble(
     fs = min(Es * eps_s, fy)
     fs_p = Es * eps_sp
 
-    # FUERZAS
-    T = As_trac * fs / 1000
-    Cs = As_comp * fs_p / 1000
-
-    # limitar a fy en magnitud
+    # -------------------------------
+    # LIMITAR ESFUERZO EN ACERO COMPRESIÓN
+    # -------------------------------
     if abs(fs_p) > fy:
         fs_p = fy * (1 if fs_p > 0 else -1)
-
+    
     # -------------------------------
-    # FUERZAS
+    # FUERZAS (en tonf)
     # -------------------------------
-    T  = As_trac * fs
-    Cc = 0.85 * fc * b * a
-    Cs = As_comp * abs(fs_p)
+    T  = As_trac * fs / 1000
+    Cc = 0.85 * fc * b * a / 1000
+    Cs = As_comp * abs(fs_p) / 1000
 
     # -------------------------------
     # MOMENTO NOMINAL
