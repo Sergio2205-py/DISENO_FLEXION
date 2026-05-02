@@ -204,7 +204,7 @@ if tipo_momento == "Positivo (tracción abajo)":
 
 else:  # momento negativo
     d_real = h - r_sup
-    d_prima_real = r_inf
+    d_prima_real = r_sup   # ✅ compresión siempre 1 capa
     As_trac = As_superior
     As_comp = As_inferior
 
