@@ -3,6 +3,15 @@ import PRUEBA_V2_VIGA as viga
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
+# ---------- FUNCIÓN CARD ----------
+def card(titulo, valor):
+    st.markdown(f"""
+    <div class="card">
+        <div class="card-title">{titulo}</div>
+        <div class="card-value">{valor}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # ---------- FUNCIONES AUXILIARES ----------
 def diametro_cm(diametro_str):
     area = viga.tablaAceros.loc[
@@ -252,11 +261,6 @@ if tipoFlexion == "simple":
     )
     Mu_kgcm = Mu * 100000
     Ku = Mu_kgcm / (b * d**2)
-    
-    card("Ku", f"{Ku:.2f} kg/cm²")
-    st.caption("Válido para flexión simple (sin acero a compresión)")
-
-
 
 else:
 
