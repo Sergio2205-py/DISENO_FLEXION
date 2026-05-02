@@ -38,7 +38,7 @@ body {
 
 # ---------- TITULO PRINCIPAL ----------
 st.markdown("""
-<h1 style='color:#4da3ff; margin-bottom: 0;'>CÁLCULO DE VIGAS DE CONCRETO ARMADO A FLEXIÓN SIMPLE</h1>
+<h1 style='color:#4da3ff; margin-bottom: 0;'>CÁLCULO DE VIGAS DE CONCRETO ARMADO A FLEXIÓN SIMPLE Y DOBLE</h1>
 """, unsafe_allow_html=True)
 
 # ---------- SIDEBAR ----------
@@ -311,6 +311,9 @@ def graficoSeccion(b, h, r):
         color='red'
     )
 
+    ax.text(2, h-2, "Compresión", color='gray')
+    ax.text(2, 2, "Tracción", color='red')
+
     # ---------------- ACERO SUPERIOR ----------------
     if As_comp > 0:
         y_sup = h - r - alto_barra
@@ -356,7 +359,7 @@ else:
 
 st.divider()
 st.divider()
-st.subheader("🧮 Diseño por momento último")
+st.subheader(f"🧮 Diseño por momento último ({tipoFlexion.capitalize()})")
 
 phiMn = calculoViga["phiMn_val"]
 
@@ -465,7 +468,7 @@ st.markdown(f"""
 colA, colB = st.columns(2)
 
 with colA:
-    st.markdown("### 🔹 Análisis (con acero colocado)")
+    st.markdown(f"### 🔹 Análisis ({tipoFlexion})")
     card("As mínimo", calculoViga["aceroMinimo"])
     card("As balanceado", calculoViga["aceroBalanceado"])
     card("As máximo", calculoViga["aceroMaximo"])
@@ -557,9 +560,10 @@ with st.expander("📐 Ver cálculos"):
     else:
 
         st.latex(r"""
-        A_{s,bal} f_y =
-        0.85 f'_c b a_{bal}
-        + A'_s f'_s
+        A_{s,bal} =
+        \frac{
+        0.85 f'_c b a_{bal} + A'_s f_{s'}
+        }{f_y}
         """)
 
     st.markdown(
@@ -572,6 +576,8 @@ with st.expander("📐 Ver cálculos"):
 
     st.latex(r"""
     C_c = 0.85 \, f'_c \, b \, a
+    \quad ; \quad
+    C_s = A'_s \, f_{s'}
     """)
 
     st.markdown(
@@ -583,7 +589,12 @@ with st.expander("📐 Ver cálculos"):
     st.markdown("### 🔹 Momento nominal")
 
     st.latex(r"""
-    M_n = T(d - a/2) \quad \text{o} \quad
+    \text{Flexión simple:} \quad
+    M_n = T(d - a/2)
+    """)
+    
+    st.latex(r"""
+    \text{Flexión doble:} \quad
     M_n = C_c(d - a/2) + C_s(d - d')
     """)
 
@@ -602,6 +613,7 @@ with st.expander("📐 Ver cálculos"):
     {\varepsilon_{cu}+\varepsilon_y}
     \right)
     """)
+    st.markdown("*(válido para flexión simple y doble)*")
 
     st.markdown(
         f"c_b = **{calculoViga['cb_val']:.2f} cm**"
