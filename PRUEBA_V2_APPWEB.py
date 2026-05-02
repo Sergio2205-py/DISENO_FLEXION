@@ -273,7 +273,7 @@ else:
         d=d,
         d_prima=d_prima
     )
-
+    
     As_req = round(resultado["As_trac"], 2)
     a_req = round(resultado["a"], 2)
 
@@ -372,7 +372,7 @@ else:
 # -------------------------------------------------
 # SOLO FLEXIÓN SIMPLE
 # -------------------------------------------------
-if tipoFlexion == "simple" and As_req is not None:
+if  As_req is not None:
 
     card("As requerido", f"{As_req:.2f} cm²")
     card("As instalado", f"{As_trac:.2f} cm²")
@@ -401,12 +401,10 @@ if tipoFlexion == "simple" and As_req is not None:
         st.success("✅ No supera As máximo")
     
         st.divider()
+        
     st.subheader("🔘 Sugerencia automática de acero")
-
     if st.button("Sugerir acero óptimo"):
-
-        opciones = []
-
+    
         barras = [
             ('3/8"', 0.71),
             ('1/2"', 1.29),
@@ -414,38 +412,44 @@ if tipoFlexion == "simple" and As_req is not None:
             ('3/4"', 2.84),
             ('1"', 5.10)
         ]
-
-        As_min_req = 0.90 * As_req
-        As_max_perm = calculoViga["aceroMaximo_val"]
-
-        for diam, area in barras:
-            for n in range(2, 9):   # 2 a 8 barras
-                As_total = n * area
-
-                if As_total >= As_min_req and As_total <= As_max_perm:
-                    exceso = As_total - As_req
-                    opciones.append((exceso, n, diam, As_total))
-
-
-        if As_req > As_max_perm:
-            st.warning("⚠️ El As requerido supera As máximo.")
-            st.info("👉 Se recomienda diseñar viga a flexión doble agregando acero superior.")
-        if opciones:
-
-            opciones.sort()
-
-            mejor = opciones[0]
-
-            exceso, n, diam, As_total = mejor
-
-            st.success("✅ Mejor opción encontrada")
-
-            card("Sugerencia", f'{n} barras de {diam}')
+    
+        mejores = []
+    
+        # combinaciones de máximo 2 diámetros cercanos
+        for i in range(len(barras)):
+            for j in range(i, min(i+2, len(barras))):  # SOLO cercanos
+    
+                diam1, area1 = barras[i]
+                diam2, area2 = barras[j]
+    
+                for n1 in range(2, 7):
+                    for n2 in range(0, 5):
+    
+                        As_total = n1 * area1 + n2 * area2
+    
+                        if As_total >= As_req:
+                            exceso = As_total - As_req
+                            mejores.append((exceso, n1, diam1, n2, diam2, As_total))
+    
+        if mejores:
+            mejores.sort()
+            mejor = mejores[0]
+    
+            exceso, n1, d1, n2, d2, As_total = mejor
+    
+            st.success("✅ Mejor combinación encontrada")
+    
+            if n2 == 0:
+                texto = f"{n1} barras de {d1}"
+            else:
+                texto = f"{n1} barras de {d1} + {n2} barras de {d2}"
+    
+            card("Sugerencia", texto)
             card("As provisto", f"{As_total:.2f} cm²")
             card("Exceso", f"{exceso:.2f} cm²")
-
+    
         else:
-            st.error("❌ No se encontró combinación simple. Aumentar sección.")
+            st.error("❌ No se encontró combinación adecuada")
 
 # ---------------- TIPO DE FALLA ----------------
 color_falla = "#2ecc71" if calculoViga["tipoFalla"] == "Tracción" else "#e74c3c"
