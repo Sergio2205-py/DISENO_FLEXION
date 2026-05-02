@@ -581,23 +581,6 @@ with colB:
     if tipoFlexion == "doble":
         card("T' (compresión)", calculoViga["Cs"])
 
-# ---------- INDICADOR c / cb ----------
-c_real = calculoViga["c_val"]
-cb = calculoViga["cb_val"]
-
-relacion = c_real / cb
-
-cd = c_real / d
-card("c/d (solo flexión simple)", f"{cd:.3f}")
-
-if fy == 4200:
-    if cd < 0.588:
-        st.success("✅ Acero fluye (criterio c/d < 0.588, fy=4200)")
-    else:
-        st.warning("⚠️ No garantiza fluencia")
-
-st.markdown("### 📊 Estado de ductilidad")
-
 # limitar barra visual a 100%
 valor_barra = min(relacion, 1.0)
 
