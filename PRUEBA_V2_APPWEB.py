@@ -189,6 +189,27 @@ d_prima = r_comp_input   # acero a compresión
 # ----------------------------------------
 # TIPO DE FLEXIÓN
 # ----------------------------------------
+# -------------------------------
+# DEFINIR GEOMETRÍA REAL SEGÚN MOMENTO
+# -------------------------------
+
+r_inf = r                  # recubrimiento acero inferior
+r_sup = r_comp_input       # recubrimiento acero superior
+
+if tipo_momento == "Positivo (tracción abajo)":
+    d_real = h - r_inf
+    d_prima_real = r_sup
+    As_trac = As_inferior
+    As_comp = As_superior
+
+else:  # momento negativo
+    d_real = h - r_sup
+    d_prima_real = r_inf
+    As_trac = As_superior
+    As_comp = As_inferior
+
+
+
 
 if As_comp > 0:
     tipoFlexion = "doble"
@@ -286,23 +307,6 @@ else:
         r_trac=(h - d_real),     
         r_comp=d_prima_real
     )
-    
-# DEFINIR GEOMETRÍA REAL SEGÚN MOMENTO
-
-    r_inf = r                  # recubrimiento acero inferior
-    r_sup = r_comp_input       # recubrimiento acero superior
-    
-    if tipo_momento == "Positivo (tracción abajo)":
-        d_real = h - r_inf
-        d_prima_real = r_sup
-        As_trac = As_inferior
-        As_comp = As_superior
-    
-    else:  # momento negativo
-        d_real = h - r_sup
-        d_prima_real = r_inf
-        As_trac = As_superior
-        As_comp = As_inferior
 
     # ---------------- d'/c ----------------
     c = calculoViga["c_val"]
