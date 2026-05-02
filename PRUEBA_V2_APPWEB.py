@@ -605,9 +605,14 @@ with st.expander("📐 Ver cálculos"):
     st.markdown("### 🔹 Peralte efectivo (As tracción)")
 
     st.latex(r"d = h - r")
-    st.markdown(
-        f"d = {h} − {r} = **{calculoViga['d']:.2f} cm**"
-    )
+    if tipo_momento == "Positivo (tracción abajo)":
+        r_usado = r_inf
+    else:
+        r_usado = r_sup
+
+st.markdown(
+    f"d = {h} − {r_usado} = **{calculoViga['d']:.2f} cm**"
+)
 
     st.divider()
 
