@@ -343,7 +343,7 @@ else:
     a_req = round(resultado["a"], 2)
 
 # ------------------ GRÁFICO DE SECCIÓN ------------------
-def graficoSeccion(b, h, r):
+def graficoSeccion(b, h, r_inf, r_sup, tipo_momento):
 
     seccion_x = [0, b, b, 0, 0]
     seccion_y = [0, 0, h, h, 0]
@@ -351,56 +351,70 @@ def graficoSeccion(b, h, r):
     fig, ax = plt.subplots(figsize=(4, 7))
     ax.plot(seccion_x, seccion_y, color='black', linewidth=2)
 
-    # Bloque de compresión (concreto)
+    # Bloque de compresión
     c = float(calculoViga["c"].replace("cm", "").strip())
     ax.fill_between([0, b], h - c, h, color='gray', alpha=0.4)
 
-    # ---------------- ACERO (TRACCIÓN) ----------------
     alto_barra = 3
-    ancho_barra = b - 2*r
-    
-    # detectar dónde está la tracción
+
+    # ---------------- TRACCIÓN ----------------
     if tipo_momento == "Positivo (tracción abajo)":
-        # tracción abajo
-        ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
+        r_trac = r_inf
+        y_trac = r_trac
     else:
-        # tracción arriba
-        y_sup = h - r - alto_barra
-        ax.fill_between([r, r + ancho_barra], y_sup, y_sup + alto_barra, color='black')
+        r_trac = r_sup
+        y_trac = h - r_trac - alto_barra
+
+    ancho_barra = b - 2 * r_trac
+
+    ax.fill_between(
+        [r_trac, r_trac + ancho_barra],
+        y_trac,
+        y_trac + alto_barra,
+        color='black'
+    )
 
     ax.text(
         b / 2,
-        r + alto_barra + 1,
+        y_trac + alto_barra + 1,
         f'$A_s={As_trac} \\, cm^2$',
         ha='center',
         color='red'
     )
 
+    # ---------------- COMPRESIÓN ----------------
+    if As_comp > 0:
+        if tipo_momento == "Positivo (tracción abajo)":
+            r_comp = r_sup
+            y_comp = h - r_comp - alto_barra
+        else:
+            r_comp = r_inf
+            y_comp = r_comp
+
+        ancho_barra = b - 2 * r_comp
+
+        ax.fill_between(
+            [r_comp, r_comp + ancho_barra],
+            y_comp,
+            y_comp + alto_barra,
+            color='blue'
+        )
+
+        ax.text(
+            b / 2,
+            y_comp - 2,
+            f"$A'_s={As_comp} \\, cm^2$",
+            ha='center',
+            color='blue'
+        )
+
+    # textos
     if tipo_momento == "Positivo (tracción abajo)":
         ax.text(2, h-2, "Compresión", color='gray')
         ax.text(2, 2, "Tracción", color='red')
     else:
         ax.text(2, h-2, "Tracción", color='red')
         ax.text(2, 2, "Compresión", color='gray')
-
-    # ---------------- ACERO SUPERIOR ----------------
-    if As_comp > 0:
-        y_sup = h - r - alto_barra
-
-        ax.fill_between(
-            [r, r + ancho_barra],
-            y_sup,
-            y_sup + alto_barra,
-            color='blue'
-        )
-
-        ax.text(
-            b / 2,
-            y_sup - 2,
-            f"$A'_s={As_comp} \\, cm^2$",
-            ha='center',
-            color='blue'
-        )
 
     ax.set_aspect("equal")
     ax.axis("off")
@@ -416,7 +430,10 @@ def card(titulo, valor):
     </div>
     """, unsafe_allow_html=True)
 # ---------- DIBUJO ----------
-st.pyplot(graficoSeccion(b, h, r), use_container_width=True)
+st.pyplot(
+    graficoSeccion(b, h, r_inf, r_sup, tipo_momento),
+    use_container_width=True
+)
 
 # ---------- CARD ANCHO MÍNIMO ----------
 card("Ancho mínimo requerido", f"{round(b_min,2)} cm")
