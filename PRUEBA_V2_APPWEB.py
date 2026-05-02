@@ -60,6 +60,12 @@ with st.sidebar:
     help="Caso típico Ø 3/4'': d = h - 8 cm"
     )
 
+    r_comp_input = st.number_input(
+    "Recubrimiento acero compresión (cm)",
+    value=6.0,
+    help="Distancia al acero en compresión (d')"
+    )
+
     st.title("Propiedades de los materiales")
     fc = st.number_input("$f'c \ (kg/cm^2)$", value=210.0)
     fy = st.number_input("$f_y \ (kg/cm^2)$", value=4200.0)
@@ -136,17 +142,6 @@ numero3 = col7.number_input("", value=0, min_value=0, key="numero3")
 diametro3 = col8.selectbox("", viga.tablaAceros["Diametro"], key="diametro3")
 
 # ----------------------------------------
-# TIPO DE MOMENTO (DEFINIR PRIMERO)
-# ----------------------------------------
-
-tipo_momento = st.radio(
-    "Tipo de momento",
-    ["Positivo (tracción abajo)", "Negativo (tracción arriba)"],
-    horizontal=True
-)
-
-
-# ----------------------------------------
 # CÁLCULO DE ÁREAS
 # ----------------------------------------
 
@@ -165,22 +160,25 @@ As_superior = (
 As_inferior = round(As_inferior, 2)
 As_superior = round(As_superior, 2)
 
-
 # ----------------------------------------
-# SWITCH CORRECTO
+# IDENTIFICACIÓN AUTOMÁTICA
 # ----------------------------------------
 
-if tipo_momento == "Positivo (tracción abajo)":
+if As_inferior >= As_superior:
+    # tracción abajo
     As_trac = As_inferior
     As_comp = As_superior
-    r_trac = r
-    r_comp = r
-
 else:
+    # tracción arriba
     As_trac = As_superior
     As_comp = As_inferior
-    r_trac = r
-    r_comp = r
+
+# ----------------------------------------
+# DISTANCIAS EFECTIVAS
+# ----------------------------------------
+
+d = h - r           # acero a tracción
+d_prima = r_comp_input   # acero a compresión
 
 # ----------------------------------------
 # TIPO DE FLEXIÓN
@@ -227,7 +225,11 @@ hay_acero_compresion = As_comp > 0
 As_req = None
 a_req = None
 
-# ---------- CÁLCULO DE FLEXIÓN ----------
+
+# ---------- ACERO REQUERIDO POR Mu ----------
+As_req = None
+a_req = None
+
 if tipoFlexion == "simple":
 
     calculoViga = viga.calculoFlexion(
@@ -244,20 +246,6 @@ if tipoFlexion == "simple":
 
 else:
 
-    # -------------------------------
-    # DEFINICIÓN DE DISTANCIAS REALES
-    # -------------------------------
-    if tipo_momento == "Positivo (tracción abajo)":
-        r_trac_real = r
-        r_comp_real = r
-    else:
-        # 🔥 invertir geometría
-        r_trac_real = r
-        r_comp_real = h - r
-
-    # -------------------------------
-    # CÁLCULO DE FLEXIÓN DOBLE
-    # -------------------------------
     calculoViga = viga.calculoFlexionDoble(
         b=b,
         h=h,
@@ -268,36 +256,9 @@ else:
         phiFlexion=phiFlexion,
         As_trac=As_trac,
         As_comp=As_comp,
-        r_trac=r_trac_real,
-        r_comp=r_comp_real
+        r_trac=r,
+        r_comp=r_comp_input
     )
-# ---------- ACERO REQUERIDO POR Mu ----------
-As_req = None
-a_req = None
-
-if tipoFlexion == "simple":
-
-    As_req, a_req = viga.acero_requerido_flexion_simple_formula(
-        b=b,
-        h=h,
-        r=r,
-        fc=fc,
-        fy=fy,
-        phi=phiFlexion,
-        Mu=Mu
-    )
-
-else:
-
-    # -------------------------------
-    # DISTANCIAS EFECTIVAS
-    # -------------------------------
-    if tipo_momento == "Positivo (tracción abajo)":
-        d = h - r
-        d_prima = r
-    else:
-        d = h - r
-        d_prima = r
 
     resultado = viga.diseno_flexion_doble(
         b=b,
@@ -333,13 +294,14 @@ def graficoSeccion(b, h, r):
     alto_barra = 3
     ancho_barra = b - 2*r
 
-    if tipo_momento == "Positivo (tracción abajo)":
-        # acero inferior
-        ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
+    # detectar dónde está la tracción
+    if As_inferior >= As_superior:
+    # tracción abajo
+    ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
     else:
-        # acero superior como tracción
-        y_sup = h - r - alto_barra
-        ax.fill_between([r, r + ancho_barra], y_sup, y_sup + alto_barra, color='black')
+    # tracción arriba
+    y_sup = h - r - alto_barra
+    ax.fill_between([r, r + ancho_barra], y_sup, y_sup + alto_barra, color='black')
 
     ax.text(
         b / 2,
