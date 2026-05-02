@@ -581,13 +581,6 @@ with colB:
     if tipoFlexion == "doble":
         card("T' (compresión)", calculoViga["Cs"])
 
-# limitar barra visual a 100%
-valor_barra = min(relacion, 1.0)
-
-st.progress(valor_barra)
-
-st.markdown(f"**Relación c / cb = {relacion:.2f}**")
-
 if As_trac > calculoViga["aceroMaximo_val"]:
     st.error("❌ Acero instalado supera As máximo permitido")
 
