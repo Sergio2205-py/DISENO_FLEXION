@@ -241,6 +241,16 @@ if tipoFlexion == "simple":
         r=r
     )
 
+    As_req, a_req = viga.acero_requerido_flexion_simple_formula(
+        b=b,
+        h=h,
+        r=r,
+        fc=fc,
+        fy=fy,
+        phi=phiFlexion,
+        Mu=Mu
+    )
+    
 else:
 
     # -------------------------------
@@ -399,8 +409,7 @@ else:
     st.error("❌ La sección NO resiste el momento solicitado")
 
 # -------------------------------------------------
-# SOLO FLEXIÓN SIMPLE
-# -------------------------------------------------
+# DISEÑO POR MOMENTO (simple y doble)-
 if  As_req is not None:
 
     card("As requerido", f"{As_req:.2f} cm²")
@@ -456,7 +465,7 @@ if  As_req is not None:
     
                         As_total = n1 * area1 + n2 * area2
     
-                        if As_total >= As_req:
+                        if As_total >= As_req and As_total <= As_max:
                             exceso = As_total - As_req
                             mejores.append((exceso, n1, diam1, n2, diam2, As_total))
     
