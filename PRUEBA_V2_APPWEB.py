@@ -574,7 +574,7 @@ cb = calculoViga["cb_val"]
 relacion = c_real / cb
 
 cd = c_real / d
-card("c/d (flexión simple)", f"{cd:.3f}")
+card("c/d (solo flexión simple)", f"{cd:.3f}")
 
 if fy == 4200:
     if cd < 0.588:
