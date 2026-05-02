@@ -290,18 +290,18 @@ def graficoSeccion(b, h, r):
     c = float(calculoViga["c"].replace("cm", "").strip())
     ax.fill_between([0, b], h - c, h, color='gray', alpha=0.4)
 
-    # ---------------- ACERO INFERIOR ----------------
+    # ---------------- ACERO (TRACCIÓN) ----------------
     alto_barra = 3
     ancho_barra = b - 2*r
-
+    
     # detectar dónde está la tracción
     if As_inferior >= As_superior:
-    # tracción abajo
-    ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
+        # tracción abajo
+        ax.fill_between([r, r + ancho_barra], r, r + alto_barra, color='black')
     else:
-    # tracción arriba
-    y_sup = h - r - alto_barra
-    ax.fill_between([r, r + ancho_barra], y_sup, y_sup + alto_barra, color='black')
+        # tracción arriba
+        y_sup = h - r - alto_barra
+        ax.fill_between([r, r + ancho_barra], y_sup, y_sup + alto_barra, color='black')
 
     ax.text(
         b / 2,
