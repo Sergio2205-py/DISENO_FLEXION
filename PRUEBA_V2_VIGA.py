@@ -264,7 +264,7 @@ def calculoFlexionDoble(
     # -------------------------------
     # MOMENTO NOMINAL
     # -------------------------------
-    Mn = (Cc * (d_trac - a / 2) + Cs * (d_trac - d_comp)) / (1000 * 100)
+    Mn = (Cc * (d_trac - a / 2) + Cs * (d_trac - d_comp)) / 100
     phiMn = phiFlexion * Mn
 
     # -------------------------------
@@ -300,7 +300,7 @@ def calculoFlexionDoble(
         "c_val": c,
         "phiMn_val": phiMn,
         "defAs": round(eps_s, 5),
-        "Cc_val": Cc / 10**3,
+        "Cc_val": Cc,
         "Mn_val": Mn,
         "cb_val": cb,
         "cb": f"{cb:.2f} cm",
