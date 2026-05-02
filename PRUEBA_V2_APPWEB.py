@@ -269,11 +269,11 @@ else:
     # -------------------------------
      # definir geometría según el tipo de momento
     if tipo_momento == "Positivo (tracción abajo)":
-        r_trac_real = r
-        r_comp_real = r_comp_input
+        d_real = h - r              # acero abajo
+        d_prima_real = r_comp_input # acero arriba
     else:
-        r_trac_real = r
-        r_comp_real = h - r_comp_input
+        d_real = h - r              # acero arriba ahora es tracción
+        d_prima_real = r_comp_input # acero abajo es compresión
 
     # cálculo de flexión doble
     calculoViga = viga.calculoFlexionDoble(
