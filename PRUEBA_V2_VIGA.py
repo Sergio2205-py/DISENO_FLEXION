@@ -87,7 +87,7 @@ def calculoFlexion(
         "Mn": f"{Mn:.2f} ton·m",
         "phiMn": f"{phiMn:.2f} ton·m",
         "tipoFalla": tipoFalla,
-        "Cc": f"{Cc:.2f} tonf"
+        "Cc": f"{Cc:.2f} tonf",
         "T_val": T,
         "T": f"{T:.2f} tonf",
         "fs": fs,
@@ -313,7 +313,7 @@ def calculoFlexionDoble(
         "a": f"{a:.2f} cm",
         "c": f"{c:.2f} cm",
         "phiMn": f"{phiMn:.2f} ton·m",
-        "tipoFalla": tipoFalla
+        "tipoFalla": tipoFalla,
         "T_val": T,
         "T": f"{T:.2f} tonf",
         "Cs_val": Cs,
