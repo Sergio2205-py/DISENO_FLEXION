@@ -184,12 +184,11 @@ else:
     As_comp = As_inferior
 
 # ----------------------------------------
-# DISTANCIAS EFECTIVAS
+# DISTANCIAS EFECTIVAS (REFERENCIA)
 # ----------------------------------------
-
-d = h - r           # acero a tracción
-d_prima = r_comp_input   # acero a compresión
-
+# ----------------------------------------
+# (ELIMINADO - ahora se usa d_real)
+# ----------------------------------------
 # ----------------------------------------
 # TIPO DE FLEXIÓN
 # ----------------------------------------
