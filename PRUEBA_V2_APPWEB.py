@@ -249,14 +249,16 @@ if tipoFlexion == "simple":
 
 else:
 
+    # -------------------------------
+    # DEFINIR GEOMETRÍA SEGÚN MOMENTO
+    # -------------------------------
     if tipo_momento == "Positivo (tracción abajo)":
         r_trac_real = r
         r_comp_real = r_comp_input
     else:
-        # invertir geometría
         r_trac_real = r
         r_comp_real = h - r_comp_input
-    
+
     calculoViga = viga.calculoFlexionDoble(
         b=b,
         h=h,
