@@ -212,72 +212,72 @@ def calculoFlexionDoble(
     import math
 
     # -------------------------------
-    # PARÁMETROS DEL CONCRETO
+    # beta1
     # -------------------------------
     if fc <= 280:
         beta1 = 0.85
     elif fc <= 560:
-        beta1 = round(1.05 - 0.714 * (fc / 1000), 3)
+        beta1 = 1.05 - 0.714 * (fc / 1000)
     else:
         beta1 = 0.65
 
-  # ---------------------------------
-# DEFINICIÓN CORRECTA DE DISTANCIAS
-# ---------------------------------
-    # d = distancia desde fibra comprimida hasta acero a tracción
-    d_trac = h - r_trac
-    # d' = distancia desde fibra comprimida hasta acero en compresión
-    d_comp = r_comp
-    # -------------------------------
-    # ECUACIÓN CUADRÁTICA EN c
-    # -------------------------------
-    A = 0.85 * fc * beta1 * b
-    B = As_comp * Es * Ecu - As_trac * fy
-    C = -As_comp * Es * Ecu * d_comp
-
-    discriminante = B**2 - 4 * A * C
-    c = (-B + math.sqrt(discriminante)) / (2 * A)
-
-    a = beta1 * c
-    
-    # DEFORMACIONES
-    eps_s  = Ecu * (d_trac - c) / c
-    eps_sp = Ecu * (c - d_comp) / c
-
-    # ESFUERZOS
-    fs = min(Es * eps_s, fy)
-    fs_p = Es * eps_sp
+    d = h - r_trac
+    d_prima = r_comp
 
     # -------------------------------
-    # LIMITAR ESFUERZO EN ACERO COMPRESIÓN
+    # BÚSQUEDA ITERATIVA DE c
     # -------------------------------
-    if abs(fs_p) > fy:
-        fs_p = fy * (1 if fs_p > 0 else -1)
-    
-    # -------------------------------
-    # FUERZAS (en tonf)
-    # -------------------------------
-    T  = As_trac * fs / 1000
-    Cc = 0.85 * fc * b * a / 1000
-    Cs = As_comp * abs(fs_p) / 1000
+    c = 1.0
+    paso = 0.05
+
+    for _ in range(2000):
+
+        a = beta1 * c
+
+        # deformaciones
+        eps_s  = Ecu * (d - c) / c
+        eps_sp = Ecu * (c - d_prima) / c
+
+        # esfuerzos
+        fs  = min(Es * eps_s, fy)
+        fs_p = min(Es * eps_sp, fy)
+
+        # fuerzas (kgf)
+        T  = As_trac * fs
+        Cc = 0.85 * fc * b * a
+        Cs = As_comp * fs_p
+
+        # equilibrio
+        error = T - (Cc + Cs)
+
+        if abs(error) < 1e-2:
+            break
+
+        c += paso
 
     # -------------------------------
-    # MOMENTO NOMINAL
+    # FUERZAS en tonf
     # -------------------------------
-    Mn = (Cc * (d_trac - a / 2) + Cs * (d_trac - d_comp)) / 100
+    T  = T / 1000
+    Cc = Cc / 1000
+    Cs = Cs / 1000
+
+    # -------------------------------
+    # MOMENTO (ton·m)
+    # -------------------------------
+    Mn = (Cc * (d - a / 2) + Cs * (d - d_prima)) / 100
     phiMn = phiFlexion * Mn
 
     # -------------------------------
     # ACEROS DE REFERENCIA
     # -------------------------------
-    As_min = 0.7 * (fc ** 0.5) / fy * b * d_trac
+    As_min = 0.7 * (fc ** 0.5) / fy * b * d
 
     eps_y = fy / Es
-    cb = (Ecu / (Ecu + eps_y)) * d_trac
-
+    cb = (Ecu / (Ecu + eps_y)) * d
     ab = beta1 * cb
 
-    eps_sp_bal = Ecu * (cb - d_comp) / cb
+    eps_sp_bal = Ecu * (cb - d_prima) / cb
     fs_p_bal = min(Es * eps_sp_bal, fy)
 
     Cc_bal = 0.85 * fc * b * ab
@@ -285,6 +285,7 @@ def calculoFlexionDoble(
 
     As_bal = (Cc_bal + Cs_bal) / fy
     As_max = 0.75 * As_bal
+
     # -------------------------------
     # TIPO DE FALLA
     # -------------------------------
@@ -292,7 +293,7 @@ def calculoFlexionDoble(
 
     return {
         "beta1": beta1,
-        "d": d_trac,
+        "d": d,
         "aceroMinimo_val": As_min,
         "aceroBalanceado_val": As_bal,
         "aceroMaximo_val": As_max,
